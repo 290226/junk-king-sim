@@ -1,0 +1,47 @@
+name: Build Windows EXE
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 配置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: 生成自包含游戏本体
+        run: node tools/build.js
+
+      - name: 同步游戏本体到桌面版目录
+        run: python -c "import shutil; shutil.copy('dist/recycleyard/index.html', 'desktop/app/index.html')"
+
+      - name: 安装打包依赖
+        run: pip install -r desktop/requirements.txt
+
+      - name: 构建 EXE
+        run: python desktop/build_exe.py
+
+      - name: 发布到 GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: desktop/dist/*.exe
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

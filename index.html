@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#120f22">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title id="doc-title">破烂王模拟器 · Junk King Sim</title>
+<link rel="stylesheet" href="./styles/base.css">
+<link rel="stylesheet" href="./styles/layout.css">
+<link rel="stylesheet" href="./styles/components.css">
+</head>
+<body data-view="yard">
+
+<!-- 开场封面：标题 + 引入故事 → 存档选择 → 新手教程 -->
+<div class="cover" id="cover">
+  <button class="btn ghost cover-lang" id="btn-cover-lang" type="button">EN</button>
+
+  <!-- 屏 1：标题 + 引入故事 -->
+  <div class="cover-screen" id="cover-story">
+    <div class="cover-inner">
+      <span class="cover-logo" id="cover-logo"></span>
+      <h1 class="cover-title" data-i18n="cover.title">破烂王模拟器</h1>
+      <p class="cover-sub" data-i18n="cover.sub">废品回收经营 · 从三百块起家</p>
+      <div class="cover-story">
+        <p data-i18n="story.p1">城市边缘，一条老街的尽头，有家不起眼的废品回收站。</p>
+        <p data-i18n="story.p2">老东家干不动了，把铺子连同那杆生了锈的秤一起交到你手上，兜里就剩三百块本钱。</p>
+        <p data-i18n="story.p3">白天街坊拎着旧家电上门，你得会看货、会砍价；夜里还能去翻翻垃圾桶，说不定捡到宝。</p>
+        <p data-i18n="story.p4">收来的废品，拆了卖材料是稳当买卖；修好了再卖能翻几倍，可修砸了就只剩一堆废铁。攒钱升级工具、去钱庄周转，看你能把铺子做多大。</p>
+      </div>
+      <button class="btn primary block" id="btn-start" type="button" data-i18n="cover.start">开始营业</button>
+    </div>
+  </div>
+
+  <!-- 屏 2：存档选择 -->
+  <div class="cover-screen" id="cover-saves" hidden>
+    <div class="cover-inner">
+      <h2 class="cover-title save-title" data-i18n="save.title">选择存档</h2>
+      <div class="save-list" id="save-list-cover"></div>
+      <button class="btn ghost block" id="btn-saves-back" type="button" data-i18n="save.back">返回</button>
+    </div>
+  </div>
+
+  <!-- 屏 3：新手教程（仅新档首次进入） -->
+  <div class="cover-screen" id="cover-tutorial" hidden>
+    <div class="cover-inner">
+      <h2 class="cover-title save-title" data-i18n="tutorial.title">新手教程</h2>
+      <div class="tutorial-box" id="tutorial-box"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" id="brand-logo"></span>
+      <div class="brand-text">
+        <h1 data-i18n="app.brand">破烂王模拟器</h1>
+        <small data-i18n="app.brandSub">废品回收经营 · V3</small>
+      </div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="topbar-actions">
+      <button class="btn ghost" id="btn-lang" type="button">EN</button>
+      <button class="btn ghost" id="btn-saves" type="button" data-i18n="save.menu">存档</button>
+    </div>
+  </header>
+
+  <div class="daybar">
+    <span class="day-chip" id="day-chip"></span>
+    <span class="slots" id="day-slots"></span>
+    <span class="spacer"></span>
+    <span class="dim" id="day-hint"></span>
+    <button class="btn primary" id="btn-phase" type="button" data-act="enter-night">收摊过夜</button>
+  </div>
+
+  <main>
+
+    <!-- 收货：天数 + 夜间 + 顾客讲价 + 钱庄入口 -->
+    <section class="view" data-view="yard">
+      <section class="panel" id="night-panel" hidden>
+        <div class="panel-head">
+          <h2 data-i18n="panel.night">夜间 · 翻垃圾桶</h2>
+          <span class="panel-sub" id="night-sub"></span>
+        </div>
+        <div class="panel-body" id="night-body"></div>
+      </section>
+
+      <section class="panel" id="customer-panel">
+        <div class="panel-head">
+          <h2 data-i18n="panel.customer">顾客</h2>
+          <span class="panel-sub" id="customer-sub"></span>
+        </div>
+        <div class="panel-body" id="customer-body"></div>
+      </section>
+
+      <section class="panel" id="fin-entry-panel">
+        <div class="panel-head">
+          <h2 data-i18n="panel.finEntry">钱庄</h2>
+          <span class="panel-sub" id="fin-entry-sub"></span>
+        </div>
+        <div class="panel-body">
+          <div class="entry-row">
+            <span class="dim" data-i18n="fin.entryAssets">理财资产</span>
+            <b class="num" id="fin-entry-assets">¥0</b>
+          </div>
+          <div class="entry-row">
+            <span class="dim" data-i18n="fin.entryOwed">欠款</span>
+            <b class="num" id="fin-entry-owed">¥0</b>
+          </div>
+          <button class="btn primary block" data-act="open-finance" data-i18n="fin.open">进入钱庄</button>
+        </div>
+      </section>
+    </section>
+
+    <!-- 工作台：拆解与修理 -->
+    <section class="view" data-view="bench">
+      <section class="panel" id="bench-panel">
+        <div class="panel-head">
+          <h2 data-i18n="panel.bench">工作台</h2>
+          <span class="panel-sub" id="bench-sub"></span>
+        </div>
+        <div class="panel-body" id="bench-body"></div>
+      </section>
+    </section>
+
+    <!-- 仓库：行情 + 材料 + 零件 -->
+    <section class="view" data-view="stock">
+      <section class="panel" id="market-panel">
+        <div class="panel-head"><h2 data-i18n="panel.market">今日行情</h2></div>
+        <div class="panel-body" id="market-body"></div>
+      </section>
+
+      <section class="panel" id="stock-panel">
+        <div class="panel-head">
+          <h2 data-i18n="panel.stock">材料仓库</h2>
+          <span class="panel-sub" id="stock-sub"></span>
+        </div>
+        <div class="panel-body" id="stock-body"></div>
+      </section>
+
+      <section class="panel" id="parts-panel">
+        <div class="panel-head">
+          <h2 data-i18n="panel.parts">零件架</h2>
+          <span class="panel-sub" id="parts-sub"></span>
+        </div>
+        <div class="panel-body" id="parts-body"></div>
+      </section>
+    </section>
+
+    <!-- 账本：工具树 + 流水账 -->
+    <section class="view" data-view="misc">
+      <section class="panel" id="tool-panel">
+        <div class="panel-head"><h2 data-i18n="panel.tool">工具树</h2></div>
+        <div class="panel-body" id="tool-body"></div>
+      </section>
+
+      <section class="panel" id="log-panel">
+        <div class="panel-head"><h2 data-i18n="panel.log">流水账</h2></div>
+        <div class="panel-body log-body" id="log-body"></div>
+      </section>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- 底部导航（窄屏） -->
+<nav class="tabbar" id="tabbar">
+  <button class="tab is-on" type="button" data-tab="yard">
+    <span class="ticon" data-icon="guest"></span><span class="tlabel" data-i18n="tab.yard">收货</span>
+  </button>
+  <button class="tab" type="button" data-tab="bench">
+    <span class="ticon" data-icon="wrench"></span><span class="tlabel" data-i18n="tab.bench">工作台</span>
+  </button>
+  <button class="tab" type="button" data-tab="stock">
+    <span class="ticon" data-icon="crate"></span><span class="tlabel" data-i18n="tab.stock">仓库</span>
+  </button>
+  <button class="tab" type="button" data-tab="misc">
+    <span class="ticon" data-icon="scale"></span><span class="tlabel" data-i18n="tab.misc">账本</span>
+  </button>
+</nav>
+
+<!-- 钱庄全屏页 -->
+<div class="finview" id="finview" hidden>
+  <div class="finview-head">
+    <button class="btn ghost" type="button" data-act="close-finance" data-i18n="fin.back">返回</button>
+    <h2 data-i18n="panel.finance">钱庄</h2>
+    <span class="panel-sub" id="finance-sub"></span>
+  </div>
+  <div class="finview-body" id="finance-body"></div>
+</div>
+
+<!-- 自定义确认弹窗（替代原生 confirm，内嵌浏览器常拦截） -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <p class="modal-text" id="modal-text"></p>
+    <div class="modal-row">
+      <button class="btn ghost" type="button" id="modal-no" data-i18n="app.restartNo">取消</button>
+      <button class="btn warn" type="button" id="modal-yes" data-i18n="app.restartYes">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 游戏内存档管理（切档 / 删档 / 新档） -->
+<div class="saves-overlay" id="saves-overlay" hidden>
+  <div class="saves-box">
+    <h2 class="cover-title save-title" data-i18n="save.title">选择存档</h2>
+    <div class="save-list" id="save-list-overlay"></div>
+    <button class="btn ghost block" type="button" id="btn-saves-close" data-i18n="save.backGame">返回游戏</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

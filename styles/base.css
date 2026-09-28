@@ -1,0 +1,148 @@
+/* ===== 像素游戏风：调色板与基础排版 ===== */
+:root {
+  /* 深紫黑底 + 锈橙/黄铜点缀，饱和度比工业风高一档，像 16 位机画面 */
+  --bg: #14121f;
+  --bg2: #1b1830;
+  --panel: #262040;
+  --panel2: #322a52;
+  --panel3: #3d3466;
+  --line: #4a3f6b;
+  --line2: #5f5288;
+  --ink: #0c0d14;          /* 描边黑，像素边框专用 */
+
+  --txt: #d6d9e8;
+  --txt-hi: #f3f4ff;
+  --dim: #8f93b2;
+  --dim2: #6a6d8c;
+
+  --rust: #d16b3f;
+  --rust2: #8f4526;
+  --brass: #f2c14e;
+  --ok: #63c74d;
+  --bad: #d9534f;
+  --info: #4a9dd8;
+  --gold: #ffd97d;
+
+  --mono: "Cascadia Mono", Consolas, "SFMono-Regular", ui-monospace, monospace;
+  --px: 3px;                /* 像素边框厚度 */
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  background:
+    radial-gradient(130% 90% at 18% -12%, #2a2450 0%, #17142a 55%, #0d0b16 100%);
+  color: var(--txt);
+  font-family: "Segoe UI", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: .3px;
+  padding: 16px;
+  /* 关掉字体抗锯齿，字会有硬边颗粒感（Chrome/Edge 生效） */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  font-smooth: never;
+  text-rendering: geometricPrecision;
+}
+
+/* 像素质感：像素网格 + CRT 扫描线 */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; opacity: .5; z-index: 0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 4px),
+    linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 8px),
+    linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 8px);
+}
+
+h1, h2, h3, h4 {
+  margin: 0; font-weight: 700; color: var(--txt-hi);
+  text-shadow: 2px 2px 0 rgba(0,0,0,.55);
+  letter-spacing: 1px;
+}
+p { margin: 0 0 8px; }
+small { font-size: 11px; }
+
+.num { font-family: var(--mono); letter-spacing: .5px; }
+.money { font-family: var(--mono); color: var(--gold); }
+.dim { color: var(--dim); }
+.ok { color: var(--ok); }
+.warn { color: var(--brass); }
+.bad { color: var(--bad); }
+.center { text-align: center; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #100e1c; }
+::-webkit-scrollbar-thumb { background: var(--line); border: 2px solid #100e1c; }
+::-webkit-scrollbar-thumb:hover { background: var(--line2); }
+
+/* ===== 像素边框（box-shadow 造出缺角描边，典型像素 UI 做法） ===== */
+.px-frame {
+  box-shadow:
+    0 calc(-1 * var(--px)) 0 0 var(--ink),
+    0 var(--px) 0 0 var(--ink),
+    calc(-1 * var(--px)) 0 0 0 var(--ink),
+    var(--px) 0 0 0 var(--ink);
+}
+
+/* ===== 通用控件 ===== */
+.btn {
+  appearance: none;
+  border: none;
+  background: var(--panel2);
+  color: var(--txt);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  padding: 7px 14px;
+  cursor: pointer;
+  position: relative;
+  transition: background .08s, color .08s;
+  box-shadow:
+    0 -3px 0 0 var(--ink),
+    0 3px 0 0 var(--ink),
+    -3px 0 0 0 var(--ink),
+    3px 0 0 0 var(--ink),
+    5px 5px 0 0 rgba(0,0,0,.45);
+}
+.btn:hover:not(:disabled) { background: var(--panel3); color: var(--txt-hi); }
+.btn:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow:
+    0 -3px 0 0 var(--ink),
+    0 3px 0 0 var(--ink),
+    -3px 0 0 0 var(--ink),
+    3px 0 0 0 var(--ink),
+    1px 1px 0 0 rgba(0,0,0,.45);
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; filter: saturate(.4); }
+.btn.primary { background: var(--rust); color: #1a0f08; text-shadow: 1px 1px 0 rgba(255,255,255,.25); }
+.btn.primary:hover:not(:disabled) { background: #e07d4c; color: #1a0f08; }
+.btn.ok { background: var(--ok); color: #0e2410; }
+.btn.ok:hover:not(:disabled) { background: #74d95c; color: #0e2410; }
+.btn.ghost { background: transparent; color: var(--dim); }
+.btn.ghost:hover:not(:disabled) { background: var(--panel2); color: var(--txt); }
+.btn.danger { background: var(--bad); color: #2a0d0c; }
+.btn.sm { padding: 4px 10px; font-size: 12px; box-shadow: 0 -2px 0 0 var(--ink), 0 2px 0 0 var(--ink), -2px 0 0 0 var(--ink), 2px 0 0 0 var(--ink), 3px 3px 0 0 rgba(0,0,0,.4); }
+.btn.sm:active:not(:disabled) { transform: translate(3px, 3px); }
+.btn.block { width: 100%; }
+
+input[type="number"], input[type="text"] {
+  background: #100e1c;
+  color: var(--txt-hi);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 6px 8px;
+  border: none;
+  outline: none;
+  box-shadow:
+    0 -2px 0 0 var(--ink),
+    0 2px 0 0 var(--ink),
+    -2px 0 0 0 var(--ink),
+    2px 0 0 0 var(--ink);
+}
+input:focus { background: #171432; box-shadow: 0 -2px 0 0 var(--brass), 0 2px 0 0 var(--brass), -2px 0 0 0 var(--brass), 2px 0 0 0 var(--brass); }
+input:disabled { opacity: .5; }

@@ -1,0 +1,17 @@
+# 依赖
+node_modules/
+
+# build.js 打包产物（bundle 与 TapTap zip，可重新生成）
+dist/
+*.zip
+
+# 桌面版打包产物（Python / PyInstaller）
+desktop/dist/
+desktop/build/work/
+desktop/build/*.spec
+__pycache__/
+*.pyc
+
+# 系统
+.DS_Store
+Thumbs.db

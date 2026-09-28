@@ -1,0 +1,16 @@
+{
+  "name": "recycle-yard",
+  "version": "3.0.0",
+  "private": true,
+  "description": "收废品经营游戏 v3 —— 零依赖 ES Module 工程，按 recycle-game-v2-design.md（v3 设计文档）实现",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.js",
+    "dev": "node tools/serve.js",
+    "check": "node tools/check.js",
+    "render-check": "node tools/render-check.js",
+    "balance": "node tools/balance.js",
+    "preview": "node tools/preview.js",
+    "build": "node tools/build.js"
+  }
+}
