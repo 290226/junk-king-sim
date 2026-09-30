@@ -2,8 +2,10 @@
 .app {
   position: relative; z-index: 1;
   max-width: 560px; margin: 0 auto;
-  display: flex; flex-direction: column; gap: 14px;
-  padding: 12px 12px calc(86px + env(safe-area-inset-bottom, 0px));
+  height: 100vh; height: 100dvh;   /* 固定占满视口：外壳不随内容增高 */
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 12px 12px calc(64px + env(safe-area-inset-bottom, 0px));
+  overflow: hidden;
 }
 
 /* ---------- 顶部招牌 ---------- */
@@ -41,10 +43,15 @@
 .stat.goods b { color: var(--ok); }
 .stat.tool b { color: var(--info); }
 
+.topbar { flex: 0 0 auto; }
 .topbar-actions { margin-left: auto; display: flex; gap: 10px; }
 
-/* ---------- 主体：手机单视图（默认） ---------- */
-main { display: block; }
+/* ---------- 主体：固定外壳内唯一的滚动区 ---------- */
+main {
+  flex: 1 1 auto; min-height: 0;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 .view { display: none; min-width: 0; }
 body[data-view="yard"]  .view[data-view="yard"],
 body[data-view="bench"] .view[data-view="bench"],
@@ -102,7 +109,7 @@ body[data-view="finance"] .view[data-view="yard"] { display: flex; flex-directio
 
 /* ---------- 手机窄屏：压缩招牌与按钮 ---------- */
 @media (max-width: 520px) {
-  .app { gap: 12px; padding: 10px 10px calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .app { gap: 10px; padding: 10px 10px calc(62px + env(safe-area-inset-bottom, 0px)); }
   .topbar { padding: 12px 12px 10px; gap: 10px; }
   .brand .logo { width: 32px; height: 32px; flex: 0 0 32px; }
   .brand h1 { font-size: 15px; letter-spacing: 2px; }
@@ -119,8 +126,8 @@ body[data-view="finance"] .view[data-view="yard"] { display: flex; flex-directio
 @media (min-width: 901px) {
   .app {
     max-width: 1120px;
-    gap: 18px;
-    padding: 22px 24px calc(88px + env(safe-area-inset-bottom, 0px));
+    gap: 14px;
+    padding: 16px 24px calc(70px + env(safe-area-inset-bottom, 0px));
   }
 
   /* 收货页（含钱庄背景态）：顾客讲价占左宽列，夜间 / 钱庄入口在右列堆叠 */

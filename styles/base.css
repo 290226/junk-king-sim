@@ -28,7 +28,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; }
+html, body { margin: 0; height: 100%; }
 
 body {
   background:
@@ -38,7 +38,8 @@ body {
   font-size: 14px;
   line-height: 1.55;
   letter-spacing: .3px;
-  padding: 16px;
+  padding: 0;
+  overflow: hidden;   /* 游戏外壳固定占满视口，整页不滚动，内容区内部滚动 */
   /* 关掉字体抗锯齿，字会有硬边颗粒感（Chrome/Edge 生效） */
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: unset;
