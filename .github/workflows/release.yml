@@ -34,14 +34,14 @@ jobs:
       - name: 安装打包依赖
         run: pip install -r desktop/requirements.txt
 
-      - name: 构建 EXE
+      - name: 构建 EXE（onedir 文件夹版，自动打成 zip）
         run: python desktop/build_exe.py
 
       - name: 发布到 GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: desktop/dist/*.exe
+          files: desktop/dist/*.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

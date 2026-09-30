@@ -3,7 +3,8 @@
 """本地构建 Windows 可执行文件（原生窗口版）。
 
 依赖：pip install -r requirements.txt
-产出：dist/破烂王模拟器.exe （单文件，自带游戏、Python 运行环境与 Edge WebView2 原生窗口支持）
+产出：dist/破烂王模拟器/ 目录（onedir 文件夹版，自带游戏、Python 运行环境与 Edge WebView2 原生窗口支持）
+说明：onedir 模式可显著降低杀毒软件（尤其 Windows Defender）对 PyInstaller 单文件自解压行为的误报。
 
 用法：python build_exe.py
 """
@@ -26,7 +27,7 @@ js_src = os.path.join(wv_dir, "js")        # pywebview 注入脚本
 cmd = [
     os.path.join(HERE, "launcher.py"),
     "--noconsole",
-    "--onefile",
+    "--onedir",
     "--name", "破烂王模拟器",
     # 游戏本体
     "--add-data", GAME + os.pathsep + ".",
@@ -45,4 +46,19 @@ if os.path.exists(ICON):
     cmd += ["--icon", ICON]
 
 PyInstaller.__main__.run(cmd)
+
+# 构建完成后，把 onedir 文件夹打成 zip（保持顶层文件夹结构），方便分发并降低杀软误报
+import zipfile
+
+ZIP_NAME = "JunkKingSim-win64.zip"
+_src_dir = os.path.join(HERE, "dist", "破烂王模拟器")
+_zip_path = os.path.join(HERE, "dist", ZIP_NAME)
+if os.path.isdir(_src_dir):
+    with zipfile.ZipFile(_zip_path, "w", zipfile.ZIP_DEFLATED) as _z:
+        for _root, _dirs, _files in os.walk(_src_dir):
+            for _fn in _files:
+                _full = os.path.join(_root, _fn)
+                _z.write(_full, os.path.relpath(_full, os.path.join(HERE, "dist")))
+    print("已打包 zip：", _zip_path)
+
 print("构建完成，产物位于 dist/ 目录。")

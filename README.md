@@ -18,14 +18,18 @@
 - 🌙 **夜间翻桶**：小区、电子城后巷、高档小区，翻垃圾桶「捡漏」整件破烂
 - 🌐 **中英双语**：顶栏一键切换中文 / English
 - 💾 **三存档 + 新手教程**：三个独立存档位，可删除；新档第一次进会带你走一遍教程
-- 🖥️ **原生窗口 exe**：Windows 单文件、离线免安装、双击即玩，不是浏览器标签页
+- 🖥️ **原生窗口 exe**：Windows 免安装、离线即玩，不是浏览器标签页（采用 onedir 文件夹版分发，误报率更低）
 
 ## 🚀 怎么玩
 
-**方式一 · 下载 exe（推荐）**
+**方式一 · 下载 zip（推荐）**
 
-到本仓库的 [Releases](../../releases) 页面下载 `破烂王模拟器.exe`，双击即可玩。
+到本仓库的 [Releases](../../releases) 页面下载最新的 `JunkKingSim-v*.zip`，
+解压后双击 `破烂王模拟器/破烂王模拟器.exe` 即可玩。
 需要 Windows 10 / 11（绝大多数机器自带 WebView2 运行时，缺失时会自动回退到浏览器）。
+
+> 💡 如果杀毒软件（如 Windows Defender）误报拦截，请选择「允许 / 恢复」，或把游戏文件夹加入排除项。
+> 这是 PyInstaller 打包常见的误报，游戏本身安全、开源可查。
 
 **方式二 · 浏览器直接玩**
 
@@ -48,7 +52,7 @@ npm run render-check # mock DOM 渲染检查
 ├── tools/                  # build / serve / check / render-check 等脚本
 ├── desktop/                # Windows 桌面版打包
 │   ├── launcher.py         # 原生窗口启动器（本地 HTTP + WebView2）
-│   ├── build_exe.py        # 一键打包成 exe
+│   ├── build_exe.py        # 一键打包成文件夹版（onedir）
 │   ├── app/index.html      # 自包含游戏本体（可直接浏览器打开）
 │   └── build/icon.ico      # 程序图标
 ├── .github/workflows/      # 打 tag 自动构建 exe 并发布 Release
@@ -60,9 +64,10 @@ npm run render-check # mock DOM 渲染检查
 exe 二进制**不进 git 仓库**，通过 GitHub Release 单独发布：
 
 - **自动发布**：推到 GitHub 后，打个版本标签 `git tag v1.0.0 && git push origin v1.0.0`，
-  Actions 会自动构建并上传 exe 到对应 Release。
+  Actions 会自动构建并上传 zip 到对应 Release。
 - **手动发布**：本地 `pip install -r desktop/requirements.txt && python desktop/build_exe.py`，
-  构建出 `desktop/dist/破烂王模拟器.exe`，再到仓库 **Releases → Draft a new release** 上传即可。
+  构建出 `desktop/dist/破烂王模拟器/` 文件夹（onedir 版，误报率更低），
+  把它打成 zip 后到仓库 **Releases → Draft a new release** 上传即可。
 
 ## 🎮 关于这个项目
 
